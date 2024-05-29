@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "sql-tests"
+version = "0.1.0"
+description = ""
+authors = ["Jamie Davis <jamjam@umich.edu>"]
+readme = "README.md"
+packages = [{include = "sqltest"}]
+
+[tool.poetry.scripts]
+sqltest = "sqltest.cli:cli"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+sqlalchemy = "^2.0.29"
+pyyaml = "^6.0.1"
+oracledb = "^2.1.2"
+click = "^8.1.7"
+python-dotenv = "^1.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.2"
+isort = "^5.13.2"
+black = "^24.4.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
