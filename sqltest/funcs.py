@@ -43,7 +43,7 @@ def unique(model: Model, column: ModelColumn, **kwargs) -> str:
 def not_null(model: Model, column: ModelColumn, **kwargs) -> str:
     """Evaluates whether all values in a column are not null"""
     sql = f"""\
-        select *
+        select {column.name}
         from {model.schema}.{model.name}
         where
           {column.name} is null"""
@@ -64,7 +64,7 @@ def accepted_values(
         values_clause = ", ".join(values)
 
     sql = f"""\
-        select *
+        select {column.name}
         from {model.schema}.{model.name}
         where
           {column.name} is not null and
@@ -106,7 +106,7 @@ def relationships(
 ) -> str:
     """Checks referential integrity between the source column and a foreign key in another table."""
     sql = f"""\
-        select *
+        select a.{column.name}
         from {model.schema}.{model.name} a
           left join {to} b on a.{column.name} = b.{field}
         where
@@ -166,7 +166,7 @@ def regexp_like(
 ) -> str:
     """Check whether a column matches a regex pattern"""
     sql = f"""
-        select *
+        select {column.name}
         from {model.schema}.{model.name}
         where
           {column.name} is not null and
@@ -181,7 +181,7 @@ def uuid(model: Model, column: ModelColumn, **kwargs) -> str:
     """Checks whether column values match a uuid regex"""
     pattern = r"^[a-f0-9]{8}-([a-f0-9]{4}-){3}[a-f0-9]{12}$"
     sql = f"""
-        select *
+        select {column.name}
         from {model.schema}.{model.name}
         where
           {column.name} is not null and
@@ -203,11 +203,11 @@ def accepted_range(
     if min_value is None and max_value is None:
         raise ValueError("Specify at least a `min_value` or `max_value`")
 
-    min_op = "<"
-    max_op = ">"
+    min_op = "<="
+    max_op = ">="
     if inclusive:
-        min_op = "<="
-        max_op = ">="
+        min_op = "<"
+        max_op = ">"
 
     clauses = []
 
@@ -215,17 +215,17 @@ def accepted_range(
         clauses.append(where)
 
     if min_value is not None:
-        clauses.append(f"not({min_value} {min_op} {column.name})")
+        clauses.append(f"{column.name} {min_op} {min_value}")
 
     if max_value is not None:
-        clauses.append(f"not({column.name} {max_op} {max_value})")
+        clauses.append(f"{column.name} {max_op} {max_value}")
 
     sql = f"""
-        select *
+        select {column.name}
         from {model.schema}.{model.name}
         where
           {column.name} is not null and
-          {' and '.join(clauses)}
+          {' or '.join(clauses)}
     """
 
     return sql
@@ -242,7 +242,7 @@ def bit(
         no = f"'{no}'"
 
     sql = f"""
-        select *
+        select {column.name}
         from {model.schema}.{model.name}
         where
           {column.name} is not null and
@@ -257,7 +257,7 @@ def value_equals(model: Model, column: ModelColumn, value: any, where: str) -> s
         value = f"'{value}'"
 
     sql = f"""
-        select *
+        select {column.name}
         from {model.schema}.{model.name}
         where
           {where} and

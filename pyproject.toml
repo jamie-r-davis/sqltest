@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sql-tests"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Jamie Davis <jamjam@umich.edu>"]
 readme = "README.md"

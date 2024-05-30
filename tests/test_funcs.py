@@ -23,3 +23,10 @@ def test_func_unique(model):
         )"""
     )
     assert actual_sql == expected_sql
+
+
+def test_func_accepted_range_with_min_max(model):
+    column = model.columns[1]
+    test = column.tests[0]
+    actual_sql = funcs.accepted_range(model, column, **test.kwargs)
+    assert "bar < 1 or bar > 10" in actual_sql
